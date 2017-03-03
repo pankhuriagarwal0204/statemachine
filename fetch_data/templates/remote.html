@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>REMOTE</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'remote_fetch.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Manage Morchas</a>
+    </div>
+  </div>
+</nav>
+    <div class="remote-buttons">
+        <button type="button" class="btn btn-info int" data-url="detect-intrusion/laser/">INTRUSION LASER</button><br />
+        <button type="button" class="btn btn-info int" data-url="detect-intrusion/infrared/">INTRUSION INFRARED</button><br />
+        <button type="button" class="btn btn-warning int" data-url="verify-intrusion/laser/">VERIFY INTRUSION LASER</button><br />
+        <button type="button" class="btn btn-warning int" data-url="verify-intrusion/infrared/">VERIFY INTRUSION INFRARED</button><br />
+        <button type="button" class="btn btn-success int" data-url="neutralize-intrusion/laser/">NEUTRALIZE INTRUSION LASER</button><br />
+        <button type="button" class="btn btn-success int" data-url="neutralize-intrusion/infrared/">NEUTRALIZE INTRUSION INFRARED</button><br />
+        <button type="button" class="btn btn-danger int" data-url="delete-intrusions/">DELETE INTRUSIONS</button><br />
+        <button type="button" class="btn btn-warning int" data-url="one-offline/" disabled>TURN OFF ONE UNIT</button><br />
+        <button type="button" class="btn btn-info int" data-url="all-online/" disabled>TURN ON ALL UNITS</button><br />
+    </div>
+</body>
+
+<script>
+    function api_call(path) {
+        $.ajax({
+            url:path,
+            method:'GET'
+        });
+    }
+
+    $(document).ready(function () {
+        var $api = 'http://192.168.100.87:7000/'
+        $('.int').click(function () {
+            var $a = $api + $(this).data('url');
+            api_call($a);
+        });
+    });
+</script>
+</html>

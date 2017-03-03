@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>REMOTE</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'remote.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">TRUTH DATA</a>
+        </div>
+    </div>
+</nav>
+<div class="col-md-6">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>S. No.</th>
+            <th>DateTime of Insertion</th>
+            <th>Uuid of Morcha</th>
+            <th>Packet Type</th>
+            <th>Payload</th>
+        </tr>
+        </thead>
+        {% for event in events %}
+        {% if event.packet_type < 100 %}
+        <tr class="danger">
+            {% else %}
+        <tr class="info">
+            {% endif %}
+            <td>{{event.id}}</td>
+            <td>{{event.req_datetime}}</td>
+            <td>{{event.uuid}}</td>
+            <td>{{event.packet_type}}</td>
+            <td>{{event.payload}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<div class="col-md-6">
+    <pre id="data"></pre>
+</div>
+<script>
+    function prettyprint(data) {
+    var jsonLine = /^( *)("[\w]+": )?("[^"]*"|[\w.+-]*)?([,[{])?$/mg;
+    var replacer = function(match, pIndent, pKey, pVal, pEnd) {
+        var key = '<span class="json-key" style="color: brown">',
+            val = '<span class="json-value" style="color: navy">',
+            str = '<span class="json-string" style="color: olive">',
+            r = pIndent || '';
+        if (pKey)
+            r = r + key + pKey.replace(/[": ]/g, '') + '</span>: ';
+        if (pVal)
+            r = r + (pVal[0] == '"' ? str : val) + pVal + '</span>';
+        return r + (pEnd || '');
+    };
+    return JSON.stringify(data, null, 3)
+               .replace(/&/g, '&amp;').replace(/\\"/g, '&quot;')
+               .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+               .replace(jsonLine, replacer);
+    }
+    function api_call() {
+        var $api = 'http://127.0.0.1:8000/'
+        var path = $api + 'intrusion/post/c44c1a2b-076b-442f-8006-315d22c3ee9d/week/2017-02-24/';
+        $.get(path,function (data) {
+            console.log(data);
+            var val = prettyprint(data);
+            console.log(val);
+            document.getElementById("data").innerHTML = val;
+        });
+    }
+
+    $(document).ready(function () {
+        api_call();
+        setInterval(function(){location.reload();},5000);
+    });
+
+
+</script>
+</body>
+</html>
