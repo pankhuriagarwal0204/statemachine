@@ -39,7 +39,7 @@ def main(key=None):
                     event.save()
                 # time.sleep(1)
 
-        elif key == 'dsn':
+        elif key == 'dsns':
             eventd = models.Event(uuid=uuid, packet_type=2, dest_addr=dest_addr, source_addr=source_addr,
                                   payload=payload)
             eventd.save()
@@ -47,6 +47,9 @@ def main(key=None):
                                   payload=payload)
             events.save()
             eventn = models.Event(uuid=uuid, packet_type=4, dest_addr=dest_addr, source_addr=source_addr,
+                                  payload=payload)
+            eventn.save()
+            eventn = models.Event(uuid=uuid, packet_type=703, dest_addr=dest_addr, source_addr=source_addr,
                                   payload=payload)
             eventn.save()
 

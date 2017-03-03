@@ -128,7 +128,7 @@ class Event(models.Model):
         db_table = 'events'
 
     def __str__(self):
-        return str(self.packet_type)
+        return str(self.packet_type) + "-" + str(self.uuid)
 
 
 class Weaksignal(models.Model):
