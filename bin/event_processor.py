@@ -42,7 +42,7 @@ class EventProcessor:
         morcha_uuid = row.uuid
         morcha_machine = self.morcha_machines[str(morcha_uuid)]
         if row.packet_type == 2:
-            morcha_machine.intrusion_detected(current_time = row.req_datetime)
+            morcha_machine.intrusion_detected_event(current_time = row.req_datetime)
         elif row.packet_type == 3:
             morcha_machine.intrusion_verified_button_pressed(current_time = row.req_datetime)
         elif row.packet_type == 4:

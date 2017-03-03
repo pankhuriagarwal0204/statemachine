@@ -4,6 +4,7 @@ from archives import views as api_views
 from archives import view_reports as unit_report
 from fetch_data import views
 
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^truth/$', api_views.TruthView),
@@ -24,6 +25,7 @@ urlpatterns = [
         'get': 'retrieve'
     })),
     url(r'^intrusion/', include('archives.urls_intrusion')),
+    url(r'^api/', include('fsm.urls')),
     url(r'^unit/post/(?P<pk>[0-9a-z-]+)/status/$', api_views.PostRecentStatus.as_view({
         'get': 'retrieve'
     })),

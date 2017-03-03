@@ -1,4 +1,5 @@
-from transitions import Machine
+from transitions.extensions import GraphMachine as Machine
+import pygraphviz
 from machine_transitions import *
 import base
 import logging
@@ -30,13 +31,17 @@ class MorchaStateMachine(object):
         self.post = post
         self.start_time = latest_intrusion_start_time
         self.end_time = latest_intrusion_end_time
-        self.machine = Machine(model=self, states=morcha_states, transitions=morcha_transitions, initial=current_state, ignore_invalid_triggers=True)
+        self.machine = Machine(model=self, states=morcha_states, transitions=morcha_transitions, initial='secure',
+                               ignore_invalid_triggers=True, auto_transitions=False, show_conditions=True)
+        self.insert = True
         self.intrusion_attempts = intrusion_attempts
+        self.graph.draw('my_machine.png', prog='dot')
 
     def after_intrusion_detected(self, current_time=None):
         logging.info('secure --> detected')
         self.start_time = current_time
         self.intrusion_attempts = 1
+        self.insert = True
 
     def increase_attempts(self, current_time=None):
         logging.info('attempts ++')
@@ -54,12 +59,15 @@ class MorchaStateMachine(object):
 
     def after_intrusion_verified(self, current_time=None):
         logging.info('Intrusion Verified')
-        intrusion = fsm_models.newIntrusion()
-        morcha = fetch_data_models.Morcha.objects.get(uuid=self.uuid)
-        intrusion.morcha = morcha
-        intrusion.start_time = self.start_time
-        intrusion.attempts = self.intrusion_attempts
-        intrusion.save()
+        if self.insert:
+            intrusion = fsm_models.newIntrusion()
+            morcha = fetch_data_models.Morcha.objects.get(uuid=self.uuid)
+            intrusion.morcha = morcha
+            intrusion.start_time = self.start_time
+            intrusion.attempts = self.intrusion_attempts
+            intrusion.save()
+        else:
+            pass
 
     def after_marked_safe(self, current_time=None):
         logging.info('Marked safe')
@@ -68,6 +76,10 @@ class MorchaStateMachine(object):
     def after_sos_raised(self, current_time=None):
         logging.info('sos raised')
         pass
+
+    def marked_safe_to_detected(self, current_time=None):
+        self.increase_attempts(current_time=current_time)
+        self.insert = False
 
     def marked_safe_to_verified(self, current_time=None):
         logging.info('marked safe --> verified')
